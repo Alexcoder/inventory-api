@@ -37,7 +37,7 @@ export const signUp = async(req, res) => {
     const hashedPassword =  await bcrypt.hash(password, salt);
     const result = await UserInventory.create({username, password: hashedPassword, name: `${firstName} ${lastName}`});
 
-    const token = jwt.sign({username: result.username, id: result._id}, process.env.SECRET , {expiresIn: "1hr"});
+    const token = jwt.sign({username: result.username, id: result._id}, process.env.SECRET , {expiresIn: "3d"});
   
    res.status(200).json({result, token})
     ;

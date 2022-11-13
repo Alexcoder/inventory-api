@@ -26,6 +26,7 @@ app.use(session({
 }))
 app.use(cookieParser());
 
+// https://inventory-api-2j2i.onrender.com
 app.use('/api/posts', postRoutes);
 app.use('/api/user', userRoutes);
 
