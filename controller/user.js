@@ -12,15 +12,13 @@ export const signIn = async(req, res) => {
      if(!existingUser) res.status(400).json({message:"User does not exist"});
 
     const isPasswordCorrect =  await bcrypt.compare(password, existingUser.password);
-    if(!isPasswordCorrect) res.status(401).json({message:"Wrong password"});
+    if(!isPasswordCorrect) res.status(401).json({message:"Wrong username or password"});
 
     const token = jwt.sign({username: existingUser.username, id: existingUser._id}, process.env.SECRET , {expiresIn: "1D"});
 
     res.status(200).json({result: existingUser, token});
      }catch(error){
-      res.status(500).cookie("access_token", token, {httpOnly: false,secure: true,
-          sameSite: 'none', maxAge: 24*60*60*1000
-      }).json({message: "Something went wrong"})
+      res.status(500).json({message: "Something went wrong"})
      }
 }
 
@@ -32,6 +30,7 @@ export const signUp = async(req, res) => {
      if(existingUser) res.status(400).json({message:"User already exist"});
 
      if(password !== confirmPassword) res.status(402).json({message : "Password mismatch"});
+     if(password.length<3) res.status(402).json({message : "Password length too short"});
     
      const salt = await bcrypt.genSalt(12)
     const hashedPassword =  await bcrypt.hash(password, salt);
