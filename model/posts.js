@@ -13,8 +13,8 @@ const postSchema = mongoose.Schema({
      type: Date,
      default: new Date()
     } 
-}
-// {timeStamp:true}
+},
+{timeStamp:true}
 )
 
  const Inventory = mongoose.model("Inventory", postSchema);

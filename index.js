@@ -14,16 +14,7 @@ dotenv.config();
 
 app.use(bodyParser.json({limit: "30mb", extended: true}));
 app.use(bodyParser.urlencoded({limit: "30mb", extended: true}));
-app.use(cors({
-    credentials: "include",
-}));
-app.use(session({
-    cookie: {
-        maxAge: 24*60*60*1000,
-        secure: true,
-        sameSite: 'none'
-    }
-}))
+app.use(cors());
 app.use(cookieParser());
 
 // https://inventory-api-2j2i.onrender.com

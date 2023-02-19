@@ -2,12 +2,20 @@ import Inventory from '../model/posts.js';
 import mongoose from 'mongoose';
 
 export const getPosts = async (req, res) => {
+        const page = req.query.page;
+        const user = req.query.user;
+        const LIMIT = 8;
+        const startIndex= (Number(page)-1) * LIMIT;
     try {
-        const TotalInventory = await Inventory.find().sort({ _id: -1 })
-        res.status(200).json(TotalInventory)
+        const total = await Inventory.countDocuments({creator: user});
+        const totalPages = Math.ceil(total/LIMIT)
+        
+        const TotalInventory = await Inventory.find({creator: user}).sort({ _id: -1 }).limit(LIMIT).skip(startIndex)
+        res.status(200).json({data: TotalInventory, page, pageNumbers: totalPages, total, limit: LIMIT})
     } catch (error) {
         res.status(400).json(error)
     }
+    console.log({"page":page, "user": user})
 }
 
 export const getPost = async (req, res) => {
@@ -26,7 +34,6 @@ export const createPost = async (req, res) => {
     try {
         const createdPost = await newPost.save();
         res.status(201).json(newPost);
-        //   res.status(201).json(createdPost);
     } catch (error) {
         res.status(403).json({ message: error.message });
     }
