@@ -2,16 +2,28 @@ import Inventory from '../model/posts.js';
 import mongoose from 'mongoose';
 
 export const getPosts = async (req, res) => {
-        const page = req.query.page;
-        const user = req.query.user;
-        const LIMIT = 8;
+        const {page, category, user} = req.query;
+        const title = new RegExp(category, "i")
+        // console.log(title)
+        const LIMIT = 15;
         const startIndex= (Number(page)-1) * LIMIT;
     try {
-        const total = await Inventory.countDocuments({creator: user});
+        const total = await Inventory.countDocuments({
+            // $or : [ {user}, {title} ]
+            creator: user, 
+            category: title
+
+        });
         const totalPages = Math.ceil(total/LIMIT)
+
+        const NoLimitTotal= await Inventory.find({creator: user, category: title})
         
-        const TotalInventory = await Inventory.find({creator: user}).sort({ _id: -1 }).limit(LIMIT).skip(startIndex)
-        res.status(200).json({data: TotalInventory, page, pageNumbers: totalPages, total, limit: LIMIT})
+        const TotalInventory = await Inventory.find(
+            {
+                creator: user, 
+                category: title
+            }).sort({ _id: -1 }).limit(LIMIT).skip(startIndex);
+        res.status(200).json({slicedData: TotalInventory, unSlicedData:NoLimitTotal, page, pageNumbers: totalPages, total, limit: LIMIT})
     } catch (error) {
         res.status(400).json(error)
     }
