@@ -16,14 +16,14 @@ export const getPosts = async (req, res) => {
         });
         const totalPages = Math.ceil(total/LIMIT)
 
-        const NoLimitTotal= await Inventory.find({creator: user, category: title})
+        // const NoLimitTotal= await Inventory.find({creator: user, category: title})
         
         const TotalInventory = await Inventory.find(
             {
                 creator: user, 
                 category: title
             }).sort({ _id: -1 }).limit(LIMIT).skip(startIndex);
-        res.status(200).json({slicedData: TotalInventory, unSlicedData:NoLimitTotal, page, pageNumbers: totalPages, total, limit: LIMIT})
+        res.status(200).json({slicedData: TotalInventory, page, pageNumbers: totalPages, total, limit: LIMIT})
     } catch (error) {
         res.status(400).json(error)
     }
