@@ -6,9 +6,10 @@ import mongoose from "mongoose";
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 
-import postRoutes from './routes/posts.js';
+import historyRoutes from './routes/history.js';
 import userRoutes from './routes/user.js';
 import allRoutes from './routes/all.js';
+import dashboardRoutes from './routes/dashboard.js';
 
 const app = express();
 dotenv.config();
@@ -19,9 +20,10 @@ app.use(cors());
 app.use(cookieParser());
 
 // https://inventory-api-2j2i.onrender.com
-app.use('/api/posts', postRoutes);
+app.use('/api/history',historyRoutes);
 app.use('/api/all', allRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 app.use((err, req, res, next)=>{
   return res.json({

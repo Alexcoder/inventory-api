@@ -1,4 +1,4 @@
-import Inventory from '../model/posts.js';
+import Inventory from '../model/history.js';
 
 export const getAllPosts = async (req, res) => {
         const{ user } = req.query;
