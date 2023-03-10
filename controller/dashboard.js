@@ -1,11 +1,11 @@
 import Dashboard from '../model/dashboard.js';
 
 export const getDashboard = async (req, res) => {
+     const title = new RegExp(req.query.creator, "i")
     try {
-        const fetchAll = await Dashboard.find();
-        const filtered = fetchAll.filter((item)=> item.creator.includes(req.query.creator))
-        console.log(filtered)
-        res.status(201).json(filtered)
+        const fetchAll = await Dashboard.find({creator: title });
+        // const filtered = fetchAll.filter((item)=> item.creator===(req.query.creator))
+        res.status(201).json(fetchAll)
     } catch (error) {
         res.status(400).json(error)
     }
@@ -16,8 +16,22 @@ export const createDashboard = async (req, res) => {
     const title = new RegExp(req.body.category, "i")
     try {
         const findPost = await Dashboard.findOne({ category: title });
-        // let created;        
-        if (findPost) {
+        // let created;
+        if(!findPost) {
+            const createNew = await Dashboard({
+                category: req.body.category,
+                user: req.body.user,
+                creator: req.body.creator,
+                quantityIn: req.body.quantityIn,
+                quantityOut: req.body.quantityOut,
+                amountIn: req.body.amountIn,
+                amountOut: req.body.amountOut,
+                buyPrice: req.body.type === "incomming" ? req.body.price : 0,
+            }).save()
+            res.status(201).json(createNew);
+        }
+        
+        else if(findPost) {
             findPost.quantityIn = Number(findPost.quantityIn) + Number(req.body.quantityIn);
             findPost.quantityOut = Number(findPost.quantityOut) + Number(req.body.quantityOut);
             findPost.amountIn = Number(findPost.amountIn) + Number(req.body.amountIn);
@@ -28,19 +42,6 @@ export const createDashboard = async (req, res) => {
 
             const created = await findPost.save()
             res.status(201).json(created);
-        }
-        else {
-            const createNew = await Dashboard.create({
-                category: req.body.category,
-                user: req.body.user,
-                creator: req.body.creator,
-                quantityIn: req.body.quantityIn,
-                quantityOut: req.body.quantityOut,
-                amountIn: req.body.amountIn,
-                amountOut: req.body.amountOut,
-                buyPrice: req.body.type === "incomming" ? req.body.price : 0,
-            })
-            res.status(201).json(createNew);
         }
     } catch (error) {
         res.status(403).json({ message: error.message });
