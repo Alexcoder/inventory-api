@@ -14,8 +14,7 @@ export const getHistory = async (req, res) => {
 
 export const getHistoryByQuery = async (req, res) => {
         const {page, category, creator} = req.query;
-        console.log(page)
-        const title = new RegExp(category, "i")
+        const title = new RegExp(category, "i");
         const limit = 10;
         const startIndex= (Number(page)-1) * limit;
     try {
@@ -37,9 +36,11 @@ export const getHistoryByQuery = async (req, res) => {
 }
 
 export const getHistoryById = async (req, res) => {
-    const { id } = req.params;
+    const {id } = req.params;
+    const _id = id;
+    const { creator } = req.query;
     try {
-        const Item = await Inventory.findById(id)
+        const Item = await Inventory.findOne({_id , creator})
         res.status(200).json(Item)
     } catch (error) {
         res.status(400).json({ message: error.message })

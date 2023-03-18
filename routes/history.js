@@ -4,7 +4,7 @@ import {getHistory, getHistoryByQuery, getHistoryById, createHistory, updateHist
 const router = express.Router();
 
 router.get('/', getHistory);
-router.get('/find/search', getHistoryByQuery);
+router.get('/search', getHistoryByQuery);
 router.get(`/find/:id`, getHistoryById);
 router.post('/', createHistory);
 router.patch('/:id', updateHistory);
