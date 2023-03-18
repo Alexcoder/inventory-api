@@ -16,7 +16,7 @@ export const getHistoryByQuery = async (req, res) => {
         const {page, category, creator} = req.query;
         console.log(page)
         const title = new RegExp(category, "i")
-        const limit = 5;
+        const limit = 10;
         const startIndex= (Number(page)-1) * limit;
     try {
         const quantity = await Inventory.countDocuments({

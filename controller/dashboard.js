@@ -1,9 +1,8 @@
 import Dashboard from '../model/dashboard.js';
 
 export const getDashboard = async (req, res) => {
-     const title = new RegExp(req.query.creator, "i")
     try {
-        const fetchAll = await Dashboard.find({creator: title });
+        const fetchAll = await Dashboard.find({creator: req.query.creator });
         // const filtered = fetchAll.filter((item)=> item.creator===(req.query.creator))
         res.status(201).json(fetchAll)
     } catch (error) {
