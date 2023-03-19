@@ -3,7 +3,6 @@ import Dashboard from '../model/dashboard.js';
 export const getDashboard = async (req, res) => {
     try {
         const fetchAll = await Dashboard.find({creator: req.query.creator });
-        // const filtered = fetchAll.filter((item)=> item.creator===(req.query.creator))
         res.status(201).json(fetchAll)
     } catch (error) {
         res.status(400).json(error)
@@ -14,7 +13,7 @@ export const getDashboard = async (req, res) => {
 export const createDashboard = async (req, res) => {
     const title = new RegExp(req.body.category, "i")
     try {
-        const findPost = await Dashboard.findOne({ category: title });
+        const findPost = await Dashboard.findOne({ category: title, creator : req.body.creator });
         // let created;
         if(!findPost) {
             const createNew = await Dashboard({
