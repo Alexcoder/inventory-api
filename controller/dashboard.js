@@ -24,6 +24,8 @@ export const createDashboard = async (req, res) => {
                 quantityOut: req.body.quantityOut,
                 amountIn: req.body.amountIn,
                 amountOut: req.body.amountOut,
+                stock : (Number(req.body.quantityIn)- Number(req.body.quantityOut)),
+                balance : (Number(req.body.amountIn)- Number(req.body.amountOut)),
                 buyPrice: req.body.type === "incomming" ? req.body.price : 0,
             }).save()
             res.status(201).json(createNew);
@@ -32,11 +34,13 @@ export const createDashboard = async (req, res) => {
         else if(findPost) {
             findPost.quantityIn = Number(findPost.quantityIn) + Number(req.body.quantityIn);
             findPost.quantityOut = Number(findPost.quantityOut) + Number(req.body.quantityOut);
+            findPost.stock = Number(findPost.quantityIn) - Number(findPost.quantityOut);
             findPost.amountIn = Number(findPost.amountIn) + Number(req.body.amountIn);
             findPost.amountOut = Number(findPost.amountOut) + Number(req.body.amountOut);
+            findPost.balance = Number(findPost.amountIn) - Number(findPost.amountOut);
             findPost.buyPrice = (req.body.type === "incomming" & findPost.buyPrice < Number(req.body.price))
-                ? Number(req.body.price)
-                : findPost.buyPrice;
+            ? Number(req.body.price)
+            : findPost.buyPrice;
 
             const created = await findPost.save()
             res.status(201).json(created);
@@ -48,26 +52,26 @@ export const createDashboard = async (req, res) => {
 
 
 export const deleteDashboard = async (req, res) => {
+    console.log(req.body)
     try {
         let updated;
         const incomming = "incomming";
         const outgoing = "outgoing"
         const title = new RegExp(req.body.category, "i")
-        const findPost = await Dashboard.findOne({ category: title })
+        const findPost = await Dashboard.findOne({ category: title, creator: req.body.creator })
+
+        const quantityIn = req.body.type===incomming ? req.body.quantity : 0;
+        const quantityOut = req.body.type===outgoing ? req.body.quantity : 0;
+        const amountIn = req.body.type===incomming ? req.body.amount : 0;
+        const amountOut = req.body.type===outgoing ? req.body.amount : 0;
 
         if (findPost) {
-            findPost.quantityIn = req.body.type === incomming ?
-                (Number(findPost.quantityIn) - Number(req.body.quantity))
-                : quantityIn;
-            findPost.quantityOut = req.body.type === outgoing ?
-                (Number(findPost.quantityOut) - Number(req.body.quantity))
-                : quantityOut;
-            findPost.amountIn = req.body.type === incomming ?
-                (Number(findPost.amountIn) - Number(req.body.amount))
-                : amountIn;
-            findPost.amountOut = req.body.type === outgoing ?
-                (Number(findPost.amountOut) - Number(req.body.amount))
-                : amountOut;
+            findPost.quantityIn = Number(findPost.quantityIn) - Number(quantityIn);
+            findPost.quantityOut = Number(findPost.quantityOut) - Number(quantityOut);
+            findPost.stock = Number(findPost.quantityIn) - Number(findPost.quantityOut);
+            findPost.amountIn = Number(findPost.amountIn) - Number(amountIn);
+            findPost.amountOut = Number(findPost.amountOut) - Number(amountOut);
+            findPost.balance = Number(findPost.amountIn) - Number(findPost.amountOut);
             updated = findPost.save()
             res.status(201).json(updated);
         }

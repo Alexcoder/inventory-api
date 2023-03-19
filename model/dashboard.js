@@ -9,6 +9,8 @@ const dashboardSchema = mongoose.Schema({
     quantityOut: { type: Number, required:true},
     amountIn: { type: Number, required:true},
     amountOut: { type: Number, required:true},    
+    stock: { type: Number, default:0},    
+    balance: { type: Number, default:0},    
 },
 {timeStamp:true}
 )
